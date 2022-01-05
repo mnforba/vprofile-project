@@ -1,4 +1,4 @@
-TOMURL="https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.37/bin/apache-tomcat-8.5.37.tar.gz"
+TOMURL="https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz"
 yum install java-1.8.0-openjdk -y
 yum install git maven wget -y
 cd /tmp/
@@ -6,8 +6,8 @@ wget $TOMURL -O tomcatbin.tar.gz
 EXTOUT=`tar xzvf tomcatbin.tar.gz`
 TOMDIR=`echo $EXTOUT | cut -d '/' -f1`
 useradd --shell /sbin/nologin tomcat
-rsync -avzh /tmp/$TOMDIR/ /usr/local/tomcat8/
-chown -R tomcat.tomcat /usr/local/tomcat8
+rsync -avzh /tmp/$TOMDIR/ /usr/local/tomcat9/
+chown -R tomcat.tomcat /usr/local/tomcat9
 
 rm -rf /etc/systemd/system/tomcat.service
 
@@ -18,13 +18,13 @@ After=network.target
 
 [Service]
 User=tomcat
-WorkingDirectory=/usr/local/tomcat8
+WorkingDirectory=/usr/local/tomcat9
 Environment=JRE_HOME=/usr/lib/jvm/jre
 Environment=JAVA_HOME=/usr/lib/jvm/jre
-Environment=CATALINA_HOME=/usr/local/tomcat8
-Environment=CATALINE_BASE=/usr/local/tomcat8
-ExecStart=/usr/local/tomcat8/bin/catalina.sh run
-ExecStop=/usr/local/tomcat8/bin/shutdown.sh
+Environment=CATALINA_HOME=/usr/local/tomcat9
+Environment=CATALINE_BASE=/usr/local/tomcat9
+ExecStart=/usr/local/tomcat9/bin/catalina.sh run
+ExecStop=/usr/local/tomcat9/bin/shutdown.sh
 SyslogIdentifier=tomcat-%i
 
 [Install]
@@ -40,9 +40,9 @@ cd vprofile-repo
 mvn install
 systemctl stop tomcat
 sleep 120
-rm -rf /usr/local/tomcat8/webapps/ROOT*
-cp target/vprofile-v2.war /usr/local/tomcat8/webapps/ROOT.war
+rm -rf /usr/local/tomcat9/webapps/ROOT*
+cp target/vprofile-v2.war /usr/local/tomcat9/webapps/ROOT.war
 systemctl start tomcat
 sleep 300
-cp /vprofile-vm-data/application.properties /usr/local/tomcat8/webapps/ROOT/WEB-INF/classes/application.properties
-systemctl restart tomcat8
+cp /vprofile-vm-data/application.properties /usr/local/tomcat9/webapps/ROOT/WEB-INF/classes/application.properties
+systemctl restart tomcat9
